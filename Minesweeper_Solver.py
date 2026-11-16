@@ -85,6 +85,8 @@ class Minesweeper_Solver:
 
     def mine_probabilities(self):
         #{closed_groups: {(flag_counts, arrangement_counts): {coords: flag_occurances})}}
+        
+        
         def combine(a, b):
             combined = {}
             for a_closed_group, a_arrangement_data in a.items():
