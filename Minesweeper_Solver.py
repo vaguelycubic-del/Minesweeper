@@ -67,7 +67,7 @@ class Minesweeper_Solver:
                                 indicator_group.add(adj_coord)
 
                                 for doubly_adj_coord in self.adjacency_cache[adj_coord]:
-                                    if doubly_adj_coord not in previous and doubly_adj_coord in self.closed_coords:
+                                    if doubly_adj_coord != closed_coord and doubly_adj_coord not in previous and doubly_adj_coord in self.closed_coords:
                                         previous.add(doubly_adj_coord)
                                         closed_group.add(doubly_adj_coord)
                                         new_closed_coords.add(doubly_adj_coord)
@@ -75,34 +75,26 @@ class Minesweeper_Solver:
 
 
 
-
-
-    @property
-    def closed_coords(self):
-        if self.closed_coords_cache is None:
-            self.closed_coords_cache = frozenset(coord for coord, value in np.ndenumerate(self.grid) if value == 9)
-        return self.closed_coords_cache
-
     def mine_probabilities(self):
         #{closed_groups: {(flag_counts, arrangement_counts): {coords: flag_occurances})}}
         
-        
-        def combine(a, b):
-            combined = {}
-            for a_closed_group, a_arrangement_data in a.items():
-                for b_closed_group, b_arrangement_data in b.items():
-                    closed_group = a_closed_group | b_closed_group
-                    combined[closed_group] = {}
-                    for (a_flag_count, a_arrangement_count), a_coord_data in a_arrangement_data.items():
-                        for (b_flag_count, b_arrangement_count), b_coord_data in b_arrangement_data.items():
-                            flag_count = a_flag_count + b_flag_count
-                            arrangement_count = a_arrangement_count * b_arrangement_count
-                            combined[closed_group][(flag_count, arrangement_count)] = {}
-                            for coord, flag_occurances in a_coord_data.items():
-                                combined[closed_group][(flag_count, arrangement_count)][coord] = flag_occurances*b_arrangement_count
-                            for coord, flag_occurances in b_coord_data.items():
-                                combined[closed_group][(flag_count, arrangement_count)][coord] = flag_occurances*a_arrangement_count
-            return combined
+        def merge(prob_data): 
+            def combine(a, b):
+                combined = {}
+                for a_closed_group, a_arrangement_data in a.items():
+                    for b_closed_group, b_arrangement_data in b.items():
+                        closed_group = a_closed_group | b_closed_group
+                        combined[closed_group] = {}
+                        for (a_flag_count, a_arrangement_count), a_coord_data in a_arrangement_data.items():
+                            for (b_flag_count, b_arrangement_count), b_coord_data in b_arrangement_data.items():
+                                flag_count = a_flag_count + b_flag_count
+                                arrangement_count = a_arrangement_count * b_arrangement_count
+                                combined[closed_group][(flag_count, arrangement_count)] = {}
+                                for coord, flag_occurances in a_coord_data.items():
+                                    combined[closed_group][(flag_count, arrangement_count)][coord] = flag_occurances*b_arrangement_count
+                                for coord, flag_occurances in b_coord_data.items():
+                                    combined[closed_group][(flag_count, arrangement_count)][coord] = flag_occurances*a_arrangement_count
+                return combined
 
 
     # UTILITIES
