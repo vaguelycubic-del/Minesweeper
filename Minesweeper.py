@@ -1,12 +1,14 @@
 import numpy as np
+import random
 # closed: 9
 # flag: 10
-#
+# mine: -1
 
 
 class Minesweeper:
-    class Loss(Exception): pass
+    class Failure(Exception): pass
 
+    # SETUP
     def __init__(self, shape=(0, 0)):
         self.shape = shape
         self.grid = np.zeros(shape, dtype=int)
@@ -22,15 +24,24 @@ class Minesweeper:
                 for adj_x in range(x-1, x+2):
                     adj_coord = (adj_y, adj_x)
                     if adj_coord in self.coords:
-                        self.adjacency_cache[coord].add(adj_coord)
+                        self.adjacency_cache.setdefault(coord, set()).add(adj_coord)
+
         for coord, adj_coords in self.adjacency_cache.items():
             self.adjacency_cache[coord] = frozenset(adj_coords)
 
 
         self.view_cache = None
 
-
-
+    def scatter_mines(self, mine_count=0):
+        coords = set(self.coords)
+        for _ in range(mine_count):
+            coord = random.choice(tuple(coords))
+            coords.remove(coord)
+            self.grid[coord] = -1
+            for adj_coord in self.adjacent_coords(coord):
+                value = self.grid[adj_coord]
+                if value != -1:
+                    self.grid[adj_coord] = value+1
 
     # PROPERTIES
     @property
@@ -49,8 +60,6 @@ class Minesweeper:
 
         return self.view_cache
 
-
-
     # ACTIONS
     def flag(self, coord):
         if self.closed[coord]:
@@ -60,12 +69,12 @@ class Minesweeper:
     def open(self, coord):
         if self.closed[coord]:
             if self.grid[coord] == -1:
-                raise self.Loss()
+                raise self.Failure()
 
             self.closed[coord] = False
 
-            previous = set(coord)
-            adj_coords = {coord}
+            previous = {coord,}
+            adj_coords = {coord,}
 
             while adj_coords:
                 coords = adj_coords
@@ -79,14 +88,21 @@ class Minesweeper:
                                 previous.add(adj_coord)
                                 adj_coords.add(adj_coord)
 
-        self.clear_caches()
-
-
-    def clear_caches(self):
         self.view_cache = None
 
+    # DUNDERS
+    def __str__(self):
+        return str(self.view)
 
-    def clear_adj_group(self, start_coord):
+    # UTILITIES
+    def adjacent_coords(self, coord):
+        return self.adjacency_cache.get(coord, frozenset())
 
+test = Minesweeper(shape=(10, 10))
+test.scatter_mines(mine_count=50)
+test.open(random.choice(tuple(test.coords)))
+print(test)
+print()
+print(test.grid)
 
 
