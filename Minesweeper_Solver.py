@@ -24,6 +24,7 @@ class Minesweeper_Solver:
         self.indicator_coords_cache = None
         self.closed_coords_cache = None
         self.flag_coords_cache = None
+        self.group_pairs_cache = None
 
         self.mine_probability_cache = None
 
@@ -43,37 +44,42 @@ class Minesweeper_Solver:
     @property
     def closed_coords(self):
         if self.closed_coords_cache is None:
-            self.indicator_coords_cache = frozenset(coord for coord, value in np.ndenumerate(self.grid) if value == 9)
-        return self.indicator_coords_cache
+            self.closed_coords_cache = frozenset(coord for coord, value in np.ndenumerate(self.grid) if value == 9)
+        return self.closed_coords_cache
 
+    @property
+    def group_pairs(self):
+        if self.group_pairs_cache is None:
+            group_pairs = set()
+            previous = set()
+            for closed_coord in self.closed_coords:
+                if closed_coord not in previous:
+                    if any(adj_coord in self.indicator_coords for adj_coord in self.adjacency_cache[closed_coord]):
+                        indicator_group = set()
+                        closed_group = set()
+                        new_closed_coords = {closed_coord}
 
-    def cache_group_pairs(self):
-        group_pairs = set()
-        previous = set()
-        for closed_coord in self.closed_coords:
-            if closed_coord not in previous:
-                indicator_group = set()
-                closed_group = set()
-                new_closed_coords = {closed_coord}
+                        while new_closed_coords:
+                            closed_coords = new_closed_coords
+                            new_closed_coords = set()
 
-                while new_closed_coords:
-                    closed_coords = new_closed_coords
-                    new_closed_coords = set()
+                            for closed_coord in closed_coords:
+                                for adj_coord in self.adjacency_cache[closed_coord]:
+                                    if adj_coord in self.indicator_coords:
+                                        if adj_coord not in previous:
+                                            previous.add(adj_coord)
+                                            indicator_group.add(adj_coord)
 
-                    for closed_coord in closed_coords:
-                        for adj_coord in self.adjacency_cache[closed_coord]:
-                            if adj_coord in self.indicator_coords and adj_coord not in previous:
-                                previous.add(adj_coord)
-                                indicator_group.add(adj_coord)
+                                        for doubly_adj_coord in self.adjacency_cache[adj_coord]:
+                                            if doubly_adj_coord not in previous and doubly_adj_coord in self.closed_coords:
+                                                previous.add(doubly_adj_coord)
+                                                closed_group.add(doubly_adj_coord)
+                                                new_closed_coords.add(doubly_adj_coord)
 
-                                for doubly_adj_coord in self.adjacency_cache[adj_coord]:
-                                    if doubly_adj_coord != closed_coord and doubly_adj_coord not in previous and doubly_adj_coord in self.closed_coords:
-                                        previous.add(doubly_adj_coord)
-                                        closed_group.add(doubly_adj_coord)
-                                        new_closed_coords.add(doubly_adj_coord)
-                group_pairs.add((frozenset(indicator_group), frozenset(closed_group))
+                        group_pairs.add((frozenset(indicator_group), frozenset(closed_group)))
 
-
+            self.group_pairs_cache = group_pairs
+        return self.group_pairs_cache
 
     def mine_probabilities(self):
         #{closed_groups: {(flag_counts, arrangement_counts): {coords: flag_occurances})}}
@@ -116,4 +122,10 @@ grid = np.array([
 
 test = Minesweeper_Solver(grid, 15)
 
-print(test.mine_probabilities)
+visualiser = np.zeros_like(test.grid)
+for indicator_group, closed_group in test.group_pairs:
+    for coord in indicator_group:
+        visualiser[coord] = -1
+    for coord in closed_group:
+        visualiser[coord] = 1
+print(visualiser)
