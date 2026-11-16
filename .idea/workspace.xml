@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="627ae703-08a4-48f9-9c0b-51d4dcf5c069" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/Minesweeper.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Minesweeper.iml" afterDir="false" />
+    <list default="true" id="627ae703-08a4-48f9-9c0b-51d4dcf5c069" name="Changes" comment="agony">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minesweeper_Solver.py" beforeDir="false" afterPath="$PROJECT_DIR$/Minesweeper_Solver.py" afterDir="false" />
     </list>
@@ -75,9 +74,22 @@
       <option name="presentableId" value="Default" />
       <updated>1794533363966</updated>
     </task>
+    <task id="LOCAL-00001" summary="agony">
+      <option name="closed" value="true" />
+      <created>1794812616180</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1794812616180</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="agony" />
+    <option name="LAST_COMMIT_MESSAGE" value="agony" />
   </component>
 </project>

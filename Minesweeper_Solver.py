@@ -83,25 +83,36 @@ class Minesweeper_Solver:
 
     def mine_probabilities(self):
         #{closed_groups: {(flag_counts, arrangement_counts): {coords: flag_occurances})}}
+        def arrangement_data(closed_coords, indicator_coords, ):
         
-        def merge(prob_data): 
-            def combine(a, b):
-                combined = {}
-                for a_closed_group, a_arrangement_data in a.items():
-                    for b_closed_group, b_arrangement_data in b.items():
-                        closed_group = a_closed_group | b_closed_group
-                        combined[closed_group] = {}
-                        for (a_flag_count, a_arrangement_count), a_coord_data in a_arrangement_data.items():
-                            for (b_flag_count, b_arrangement_count), b_coord_data in b_arrangement_data.items():
-                                flag_count = a_flag_count + b_flag_count
-                                arrangement_count = a_arrangement_count * b_arrangement_count
-                                combined[closed_group][(flag_count, arrangement_count)] = {}
-                                for coord, flag_occurances in a_coord_data.items():
-                                    combined[closed_group][(flag_count, arrangement_count)][coord] = flag_occurances*b_arrangement_count
-                                for coord, flag_occurances in b_coord_data.items():
-                                    combined[closed_group][(flag_count, arrangement_count)][coord] = flag_occurances*a_arrangement_count
-                return combined
+        def combined(prob_data):
+            prob_data = list(prob_data.items())
+            combined_prob_data = prob_data.pop(0)
 
+            def combine(a, b):
+                combined_prob_data = {}
+                a_closed_group, a_arrangement_data = a
+                b_closed_group, b_arrangement_data = b
+                closed_group = a_closed_group | b_closed_group
+                combined_prob_data[closed_group] = {}
+                for (a_flag_count, a_arrangement_count), a_coord_data in a_arrangement_data.items():
+                    for (b_flag_count, b_arrangement_count), b_coord_data in b_arrangement_data.items():
+                        flag_count = a_flag_count + b_flag_count
+                        arrangement_count = a_arrangement_count * b_arrangement_count
+                        combined_prob_data[closed_group][(flag_count, arrangement_count)] = {}
+                        for coord, flag_occurances in a_coord_data.items():
+                            combined_prob_data[closed_group][(flag_count, arrangement_count)][coord] = flag_occurances*b_arrangement_count
+                        for coord, flag_occurances in b_coord_data.items():
+                            combined_prob_data[closed_group][(flag_count, arrangement_count)][coord] = flag_occurances*a_arrangement_count
+                return combined_prob_data
+
+            for data in self.closed_coords:
+                combined_prob_data = combine(combined_prob_data, data)
+
+            return combined_prob_data
+
+
+        mine_probabilities = np.zeros_like(self.grid)
 
     # UTILITIES
     def adjacent_coords(self, coord):
