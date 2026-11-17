@@ -7,7 +7,8 @@ import random
 
 class Minesweeper:
     class Failure(Exception): pass
-
+    class Success(Exception): pass
+        
     # SETUP
     def __init__(self, shape=(0, 0)):
         self.shape = shape
