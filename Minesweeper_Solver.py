@@ -119,7 +119,7 @@ class Minesweeper_Solver:
                                 doubly_adj_coords = self.adjacent_coords(adj_coord)
                                 doubly_adj_seen = len(seen_coords & doubly_adj_coords)
                                 doubly_adj_unseen = len(unseen_coords & doubly_adj_coords)
-                                doubly_adj_flags = len(self.flag_coords & doubly_adj_coords)
+                                doubly_adj_flags = len(coord for coord in doubly_adj_coords if grid[coord] == 10)
                                 if (value - doubly_adj_flags) > (doubly_adj_unseen - doubly_adj_seen):
                                     return True
 
