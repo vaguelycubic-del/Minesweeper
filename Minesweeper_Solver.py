@@ -128,7 +128,7 @@ class Minesweeper_Solver:
                     for flag in (True, False):
                         if flag:
                             grid[coord] = 10
-                            if not flag_invalidates(coord, grid) or flag_count >= self.mine_count:
+                            if not flag_invalidates(coord, grid) and flag_count < self.mine_count:
                                 backtrack(unseen_coords, seen_coords, grid, flag_count + 1)
 
                             grid[coord] = value
