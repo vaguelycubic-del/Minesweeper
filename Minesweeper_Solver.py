@@ -151,6 +151,8 @@ class Minesweeper_Solver:
                 for c_flag_count, c_coords in combined_coord_data.items():
                     for flag_count, coords in flag_counts.items():
                         new_flag_count = c_flag_count+flag_count
+                        if new_flag_count > self.mine_count:
+                            continue
                         new_combined_coord_data.setdefault(new_flag_count, {})
                         
                         c_arrangements_count = combined_arrangements_data[c_flag_count]
@@ -176,12 +178,13 @@ class Minesweeper_Solver:
             global_arrangements_count = 0
             for flag_count, coords in combined_coord_data.items():
                 independent_mine_count = self.mine_count-flag_count
+                arrangements_count = combined_arrangements_data[flag_count]
                 closed_arrangements_count = math.comb(len(independent_closed_coords), independent_mine_count)
-                global_arrangements_count += closed_arrangements_count * combined_arrangements_data[flag_count]
+                global_arrangements_count += closed_arrangements_count * arrangements_count
                 for coord, flag_occurances in coords.items():
                     mine_probability_grid[coord] += flag_occurances * closed_arrangements_count
                 for coord in independent_closed_coords:
-                    mine_probability_grid[coord] += independent_mine_count/len(independent_closed_coords)
+                    mine_probability_grid[coord] += independent_mine_count/len(independent_closed_coords)*arrangements_count
                 
             mine_probability_grid /= global_arrangements_count
             self.mine_probability_grid_cache = mine_probability_grid
@@ -209,8 +212,26 @@ class Minesweeper_Solver:
             flag_targets.update(coord for coord, mine_probability in np.ndenumerate(self.mine_probability_grid) if mine_probability == 1)
             self.flag_targets_cache = frozenset(flag_targets)
         return self.flag_targets_cache
-        
-                
+
+    # ACTIONS
+    def update(self, grid, mine_count = None):
+        if mine_count is not None:
+            self.mine_count = mine_count
+
+        self.grid = grid
+
+        self.clear_caches()
+
+    def clear_caches(self):
+        self.indicator_coords_cache = None
+        self.closed_coords_cache = None
+        self.flag_coords_cache = None
+        self.group_pairs_cache = None
+
+        self.mine_probability_grid_cache = None
+        self.open_targets_cache = None
+        self.flag_targets_cache = None
+
     # UTILITIES
     def adjacent_coords(self, coord):
         return self.adjacency_cache.get(coord, frozenset())

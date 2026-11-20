@@ -14,8 +14,11 @@ while True:
 
 solver = Solver(ms1.view, ms1.mine_count)
 
-for coord in solver.open_targets:
-    ms1.open(coord)
+while True:
+    for coord in solver.open_targets:
+        ms1.open(coord)
 
-for coord in solver.flag_targets:
-    ms1.flag(coord)
+    for coord in solver.flag_targets:
+        ms1.flag(coord)
+
+    solver.update(ms1.view)
