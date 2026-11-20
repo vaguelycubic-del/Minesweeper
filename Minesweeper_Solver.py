@@ -190,22 +190,3 @@ class Minesweeper_Solver:
     def adjacent_coords(self, coord):
         return self.adjacency_cache.get(coord, frozenset())
 
-grid = np.array([
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 2, 1, 2, 9, 9, 9, 9, 9, 9],
-    [9, 1, 0, 1, 2, 9, 9, 9, 9, 9],
-    [9, 1, 0, 0, 1, 1, 1, 9, 9, 9],
-    [9, 1, 1, 0, 0, 0, 1, 9, 9, 9],
-    [9, 9, 1, 0, 0, 1, 2, 9, 9, 9],
-    [9, 9, 2, 1, 1, 1, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-    [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
-])
-
-
-test = Minesweeper_Solver(grid, 50)
-
-print(tuple(test.group_pairs)[0][1])
-print(test.mine_probabilities)
-
