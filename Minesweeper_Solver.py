@@ -149,7 +149,10 @@ class Minesweeper_Solver:
             global_closed_coords.update(closed_coords)
             new_combined_coord_data = {}
 
-            for flag_count, coords in flag_counts.items():
+            for combined_flag_count, combined_coords in combined_coord_data.items():
+                for flag_count, coords in flag_counts.items():
+                    new_flag_count = combined_flag_count+flag_count
+                    new_combined_coord_data.setdefault(new_flag_count, {})
 
 
 
