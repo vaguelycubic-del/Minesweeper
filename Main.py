@@ -7,17 +7,16 @@ ms1 = minesweeper((10, 10))
 ms1.scatter_mines(15)
 try:
     ms1.open((5, 5))
-except Minesweeper.FailureError:
+except Minesweeper.Minesweeper.Failure:
     print('break failed')
 
 solver = solver(ms1.view, ms1.mine_count)
-print(solver.mine_probabilities)
 
 for coord, mine_probability in np.ndenumerate(solver.mine_probabilities):
-    print(mine_probability)
-    if mine_probability < 10**-2:
+    if mine_probability == 0:
         ms1.open(coord)
-    if mine_probability > 1-10**-2:
+    if mine_probability == 1:
         ms1.flag(coord)
 
 print(ms1)
+print(ms1.grid[5, 5])

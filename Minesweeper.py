@@ -55,7 +55,7 @@ class Minesweeper:
 
             for coord, flag in np.ndenumerate(self.flags):
                 if flag:
-                    view_cache[coord] = 9
+                    view_cache[coord] = 10
             self.view_cache = view_cache
 
 
@@ -104,8 +104,3 @@ class Minesweeper:
     # UTILITIES
     def adjacent_coords(self, coord):
         return self.adjacency_cache.get(coord, frozenset())
-
-test = Minesweeper((11, 11))
-test.scatter_mines(15)
-test.open((5, 5))
-print(test)
