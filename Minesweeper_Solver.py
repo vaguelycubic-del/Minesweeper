@@ -103,7 +103,7 @@ class Minesweeper_Solver:
                         value = grid[coord]
                         def flag_invalidates():
                             for adj_coord in self.adjacent_coords(coord):
-                                if adj_coord in self.indicator_coords:
+                                if adj_coord in indicator_coords:
                                     _value = grid[adj_coord]
                                     doubly_adj_flags = len(tuple(doubly_adj_coord for doubly_adj_coord in self.adjacent_coords(adj_coord) if grid[doubly_adj_coord] == 10))
                                     if doubly_adj_flags > _value:
@@ -112,7 +112,7 @@ class Minesweeper_Solver:
     
                         def open_invalidates():
                             for adj_coord in self.adjacent_coords(coord):
-                                if adj_coord in self.indicator_coords:
+                                if adj_coord in indicator_coords:
                                     _value = grid[adj_coord]
                                     doubly_adj_coords = self.adjacent_coords(adj_coord)
                                     doubly_adj_unseen = len(unseen_coords & doubly_adj_coords)
