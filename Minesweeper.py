@@ -99,11 +99,6 @@ class Minesweeper:
     def adjacent_coords(self, coord):
         return self.adjacency_cache.get(coord, frozenset())
 
-test = Minesweeper(shape=(10, 10))
-test.scatter_mines(mine_count=50)
-test.open(random.choice(tuple(test.coords)))
-print(test)
-print()
-print(test.grid)
+
 
 
