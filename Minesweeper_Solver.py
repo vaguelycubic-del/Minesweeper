@@ -81,46 +81,47 @@ class Minesweeper_Solver:
             self.group_pairs_cache = group_pairs
         return self.group_pairs_cache
 
+    @property
     def mine_probabilities(self):
-        #{closed_groups: {flag_counts: (arrangement_count, {coords: flag_occurances})}}
+        #{closed_groups: {flag_counts: arrangement_counts}
+        #{closed_groups: {flag_counts: {coords: flag_occurances}}}
 
-        prob_data = {}
+        arrangement_data = {}
+        coord_data = {}
         for indicator_coords, closed_coords in self.group_pairs:
-            prob_data[closed_coords] = {}
             def backtrack(unseen_coords, seen_coords, grid=self.grid, flag_count=len(self.flag_coords)):
                 if len(unseen_coords) == 0:
-                    prob_data[closed_coords].setdefault(flag_count, [0, {}])
-                    prob_data[closed_coords][flag_count][0] += 1
-                    for coord in seen_coords:
-                        prob_data[closed_coords][flag_count][1].setdefault(coord, 0)
-
+                    coord_data.setdefault(closed_coords, {}).setdefault(flag_count, {})
+                    arrangement_data.setdefault(closed_coords, {}).setdefault(flag_count, 0)
+                    arrangement_data[closed_coords][flag_count] += 1
+                    for coord in seen_coords | self.flag_coords:
+                        coord_data[closed_coords][flag_count].setdefault(coord, 0)
                         if grid[coord] == 10:
-
-                            prob_data[closed_coords][flag_count][1][coord] += 1
+                            coord_data[closed_coords][flag_count][coord] += 1
+                    return
                 else:
-
                     coord = unseen_coords.pop()
                     seen_coords.add(coord)
                     value = grid[coord]
-                    def flag_invalidates(coord, grid):
+                    def flag_invalidates():
                         for adj_coord in self.adjacent_coords(coord):
                             if adj_coord in self.indicator_coords:
-                                value = grid[adj_coord]
-                                adj_flags = len(self.flag_coords & self.adjacent_coords(adj_coord))
-                                if adj_flags > value:
+                                _value = grid[adj_coord]
+                                doubly_adj_flags = len(tuple(doubly_adj_coord for doubly_adj_coord in self.adjacent_coords(adj_coord) if grid[doubly_adj_coord] == 10))
+                                if doubly_adj_flags > _value:
                                     return True
+
 
                         return False
 
-                    def open_invalidates(coord, grid, unseen_coords, seen_coords):
+                    def open_invalidates():
                         for adj_coord in self.adjacent_coords(coord):
                             if adj_coord in self.indicator_coords:
-                                value = grid[adj_coord]
+                                _value = grid[adj_coord]
                                 doubly_adj_coords = self.adjacent_coords(adj_coord)
-                                doubly_adj_seen = len(seen_coords & doubly_adj_coords)
                                 doubly_adj_unseen = len(unseen_coords & doubly_adj_coords)
-                                doubly_adj_flags = len(coord for coord in doubly_adj_coords if grid[coord] == 10)
-                                if (value - doubly_adj_flags) > (doubly_adj_unseen - doubly_adj_seen):
+                                doubly_adj_flags = len(tuple(doubly_adj_coord for doubly_adj_coord in doubly_adj_coords if grid[doubly_adj_coord] == 10))
+                                if (_value - doubly_adj_flags) > doubly_adj_unseen:
                                     return True
 
                         return False
@@ -128,49 +129,24 @@ class Minesweeper_Solver:
                     for flag in (True, False):
                         if flag:
                             grid[coord] = 10
-                            if not flag_invalidates(coord, grid) and flag_count < self.mine_count:
+                            if not flag_invalidates() and flag_count < self.mine_count:
                                 backtrack(unseen_coords, seen_coords, grid, flag_count + 1)
 
                             grid[coord] = value
                         else:
-                            if not open_invalidates(coord, grid, unseen_coords, seen_coords):
+                            if not open_invalidates():
                                 backtrack(unseen_coords, seen_coords, grid, flag_count)
 
                     seen_coords.remove(coord)
                     unseen_coords.add(coord)
 
             backtrack(set(closed_coords), set())
+        print(arrangement_data.values())
+        print(coord_data.values())
 
 
-        def combined(prob_data):
-            prob_data = list(prob_data.items())
 
-            combined_prob_data = prob_data.pop(0)
 
-            def combine(a, b):
-                a_closed_group, a_arrangement_data = a
-                b_closed_group, b_arrangement_data = b
-                closed_group = a_closed_group | b_closed_group
-                combined_prob_data = {}
-                for a_flag_count, (a_arrangement_count, a_coord_data) in a_arrangement_data.items():
-                    for b_flag_count, (b_arrangement_count, b_coord_data) in b_arrangement_data.items():
-                        flag_count = a_flag_count + b_flag_count
-                        arrangement_count = a_arrangement_count * b_arrangement_count
-                        combined_prob_data.setdefault(flag_count, [arrangement_count, {}])
-                        for coord, flag_occurances in a_coord_data.items():
-                            combined_prob_data[flag_count][1].setdefault(coord, 0)
-                            combined_prob_data[flag_count][1][coord] += flag_occurances*b_arrangement_count
-                        for coord, flag_occurances in b_coord_data.items():
-                            combined_prob_data[flag_count][1].setdefault(coord, 0)
-                            combined_prob_data[flag_count][1][coord] += flag_occurances * a_arrangement_count
-                return closed_group, combined_prob_data
-
-            for data in prob_data:
-                combined_prob_data = combine(combined_prob_data, data)
-
-            return combined_prob_data
-
-        closed_group, combined_prob_data = combined(prob_data)
 
         mine_probabilities = np.zeros_like(self.grid, dtype=float)
 
@@ -205,4 +181,5 @@ grid = np.array([
 
 test = Minesweeper_Solver(grid, 50)
 
-print(test.mine_probabilities())
+print(tuple(test.group_pairs)[0][1])
+print(test.mine_probabilities)
