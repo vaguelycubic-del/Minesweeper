@@ -83,7 +83,7 @@ class Minesweeper_Solver:
 
     @property
     def mine_probabilities(self):
-        if self.mine_probability_cache is None:
+        if self.mine_probability_grid_cache is None:
             arrangements_data = {}
             coord_data = {}
             for indicator_coords, closed_coords in self.group_pairs:

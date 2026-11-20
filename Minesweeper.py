@@ -64,7 +64,7 @@ class Minesweeper:
     @property
     def mine_count(self):
         if self.mine_count_cache is None:
-            self.mine_count = len(n for n in self.grid if n==-1)
+            self.mine_count_cache = np.count_nonzero(self.grid == -1)
         return self.mine_count_cache
 
     # ACTIONS
@@ -105,6 +105,7 @@ class Minesweeper:
     def adjacent_coords(self, coord):
         return self.adjacency_cache.get(coord, frozenset())
 
-
-
-
+test = Minesweeper((11, 11))
+test.scatter_mines(15)
+test.open((5, 5))
+print(test)
