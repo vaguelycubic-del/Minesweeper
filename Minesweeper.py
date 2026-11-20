@@ -72,6 +72,8 @@ class Minesweeper:
         if self.closed[coord]:
             self.closed[coord] = False
             self.flags[coord] = True
+            if np.all(self.closed == False):
+                raise self.Success
 
     def open(self, coord):
         if self.closed[coord]:
@@ -94,6 +96,9 @@ class Minesweeper:
                                 self.closed[adj_coord] = False
                                 previous.add(adj_coord)
                                 adj_coords.add(adj_coord)
+
+        if np.all(self.closed == False):
+            raise self.Success
 
         self.view_cache = None
 

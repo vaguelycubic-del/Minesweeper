@@ -1,22 +1,21 @@
 import numpy as np
 import Minesweeper
-from Minesweeper import Minesweeper as minesweeper
-from Minesweeper_Solver import Minesweeper_Solver as solver
+from Minesweeper import Minesweeper
+from Minesweeper_Solver import Minesweeper_Solver as Solver
 
-ms1 = minesweeper((10, 10))
-ms1.scatter_mines(15)
-try:
-    ms1.open((5, 5))
-except Minesweeper.Minesweeper.Failure:
-    print('break failed')
+while True:
+    ms1 = Minesweeper((10, 10))
+    ms1.scatter_mines(15)
+    try:
+        ms1.open((5, 5))
+    except Minesweeper.Failure:
+        continue
+    break
 
-solver = solver(ms1.view, ms1.mine_count)
+solver = Solver(ms1.view, ms1.mine_count)
 
-for coord, mine_probability in np.ndenumerate(solver.mine_probabilities):
-    if mine_probability == 0:
-        ms1.open(coord)
-    if mine_probability == 1:
-        ms1.flag(coord)
+for coord in solver.open_targets:
+    ms1.open(coord)
 
-print(ms1)
-print(ms1.grid[5, 5])
+for coord in solver.flag_targets:
+    ms1.flag(coord)

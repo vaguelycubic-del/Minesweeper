@@ -27,6 +27,8 @@ class Minesweeper_Solver:
         self.group_pairs_cache = None
 
         self.mine_probability_grid_cache = None
+        self.open_targets_cache = None
+        self.flag_targets_cache = None
 
     # PROPERTIES
     @property
@@ -82,7 +84,7 @@ class Minesweeper_Solver:
         return self.group_pairs_cache
 
     @property
-    def mine_probabilities(self):
+    def mine_probability_grid(self):
         if self.mine_probability_grid_cache is None:
             arrangements_data = {}
             coord_data = {}
@@ -185,7 +187,30 @@ class Minesweeper_Solver:
             self.mine_probability_grid_cache = mine_probability_grid
         
         return self.mine_probability_grid_cache
+    
+    @property
+    def open_targets(self):
+        if self.open_targets_cache is None:
+            open_targets = set()
+            
+            grid_items = set(np.ndenumerate(self.mine_probability_grid))
+
+            open_targets.update(coord for coord, mine_probability in grid_items if mine_probability == 0)
+                
+            coord, mine_probability = min(grid_items, key = lambda item: item[1])
+            open_targets.add(coord)
+            self.open_targets_cache = frozenset(open_targets)
+        return self.open_targets_cache
+    
+    @property
+    def flag_targets(self):
+        if self.flag_targets_cache is None:
+            flag_targets = set()
+            flag_targets.update(coord for coord, mine_probability in np.ndenumerate(self.mine_probability_grid) if mine_probability == 1)
+            self.flag_targets_cache = frozenset(flag_targets)
+        return self.flag_targets_cache
         
+                
     # UTILITIES
     def adjacent_coords(self, coord):
         return self.adjacency_cache.get(coord, frozenset())
