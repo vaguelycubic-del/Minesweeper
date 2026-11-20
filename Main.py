@@ -9,7 +9,6 @@ try:
     ms1.open((5, 5))
 except Minesweeper.FailureError:
     print('break failed')
-print(ms1)
 
 solver = solver(ms1.view, ms1.mine_count)
 print(solver.mine_probabilities)
