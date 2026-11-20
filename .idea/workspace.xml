@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="627ae703-08a4-48f9-9c0b-51d4dcf5c069" name="Changes" comment="agony">
-      <change beforePath="$PROJECT_DIR$/.idea/Minesweeper.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Minesweeper.iml" afterDir="false" />
+    <list default="true" id="627ae703-08a4-48f9-9c0b-51d4dcf5c069" name="Changes" comment="split dict and fixing in mine prob">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Minesweeper_Solver.py" beforeDir="false" afterPath="$PROJECT_DIR$/Minesweeper_Solver.py" afterDir="false" />
     </list>
@@ -93,7 +92,15 @@
       <option name="project" value="LOCAL" />
       <updated>1794865803932</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="split dict and fixing in mine prob">
+      <option name="closed" value="true" />
+      <created>1795134693256</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1795134693256</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -101,6 +108,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="agony" />
-    <option name="LAST_COMMIT_MESSAGE" value="agony" />
+    <MESSAGE value="split dict and fixing in mine prob" />
+    <option name="LAST_COMMIT_MESSAGE" value="split dict and fixing in mine prob" />
   </component>
 </project>

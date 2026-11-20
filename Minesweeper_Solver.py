@@ -141,8 +141,16 @@ class Minesweeper_Solver:
                     unseen_coords.add(coord)
 
             backtrack(set(closed_coords), set())
-        print(arrangement_data.values())
-        print(coord_data.values())
+
+        global_closed_coords = set()
+        combined_coord_data = {}
+        combined_arrangement_data = {}
+        for closed_coords, flag_counts in coord_data.items():
+            global_closed_coords.update(closed_coords)
+            new_combined_coord_data = {}
+
+            for flag_count, coords in flag_counts.items():
+
 
 
 
@@ -150,16 +158,15 @@ class Minesweeper_Solver:
 
         mine_probabilities = np.zeros_like(self.grid, dtype=float)
 
-        total_arrangements = 0
-        independent_coords = self.closed_coords - closed_group
-        for flag_count, (arrangement_count, coord_data) in combined_prob_data.items():
-            independent_arrangements = math.comb(len(independent_coords), self.mine_count - flag_count)
-            total_arrangements += independent_arrangements*arrangement_count
-            for coord, flag_occurances in coord_data.items():
-                mine_probabilities[coord] += independent_arrangements*flag_occurances
+        independent_closed_coords = len(self.closed_coords) - len(global_closed_coords)
+        global_arrangements_count = 0
+        for flag_count, coords in combined_coord_data.items():
+            closed_arrangements_count = math.comb(independent_closed_coords, self.mine_count-flag_count)
+            global_arrangements_count += closed_arrangements_count * combined_arrangement_data[flag_count]
+            for coord, flag_occurances in coords.items():
+                mine_probabilities[coord] += flag_occurances * closed_arrangements_count
 
-        mine_probabilities /= total_arrangements
-        return mine_probabilities
+        mine_probabilities /= global_arrangements_count
 
     # UTILITIES
     def adjacent_coords(self, coord):
