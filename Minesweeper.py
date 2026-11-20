@@ -30,8 +30,8 @@ class Minesweeper:
         for coord, adj_coords in self.adjacency_cache.items():
             self.adjacency_cache[coord] = frozenset(adj_coords)
 
-
         self.view_cache = None
+        self.mine_count_cache = None
 
     def scatter_mines(self, mine_count=0):
         coords = set(self.coords)
@@ -60,6 +60,12 @@ class Minesweeper:
 
 
         return self.view_cache
+
+    @property
+    def mine_count(self):
+        if self.mine_count_cache is None:
+            self.mine_count = len(n for n in self.grid if n==-1)
+        return self.mine_count_cache
 
     # ACTIONS
     def flag(self, coord):
