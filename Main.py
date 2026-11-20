@@ -13,7 +13,7 @@ while True:
     break
 
 solver = Solver(ms1.view, ms1.mine_count)
-
+print(solver.mine_probability_grid)
 while True:
     for coord in solver.open_targets:
         ms1.open(coord)
